@@ -1,5 +1,5 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Python ToolTips for Tkinter V1.0.2
+# Python ToolTips for Tkinter V1.0.3
 #
 # Copyright 2016, PedroHenriques
 # http://www.pedrojhenriques.com
@@ -117,8 +117,16 @@ class ToolTips:
         # create the tooltip label widget and initial width + height
         self.handleTooltipWidget(top_master)
 
-        if (y + widget_ref.winfo_height() + 20 >= top_master.winfo_height()):
+        if (y + widget_ref.winfo_height() >= top_master.winfo_height()):
+            y -= self.tt_widget.winfo_reqheight() + widget_ref.winfo_height() + 10
+        elif (y + widget_ref.winfo_height() + 20 >= top_master.winfo_height()):
             y -= self.tt_widget.winfo_reqheight() + widget_ref.winfo_height()
+
+        if (x + widget_ref.winfo_width() >= top_master.winfo_width()):
+            x -= widget_ref.winfo_width()
+
+        if x == 0:
+            x += 3
 
         # draw the tooltip
         self.tt_widget.place(x=x-3, y=y+30)

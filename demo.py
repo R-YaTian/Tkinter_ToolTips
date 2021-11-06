@@ -54,13 +54,13 @@ try:
     widget.grid(row=3, column=2, sticky="S,E")
     widgets.append(widget)
     tooltip_text.append(
-        "This is a tooltip that is very long and should not fit on the screen. As such it will be split into several lines, with each line using as much width as possible!")
+        "This is a tooltip\nthat is very long\nand should not fit\non the screen. As\nsuch it will be\nsplit into several\nlines, with each\nline using as much\nwidth as possible!")
 
     # center
     widget = ttk.Label(app_window, text="Hover me!", font=font_obj)
     widget.grid(row=2, column=1, sticky="S,E")
     widgets.append(widget)
-    tooltip_text.append("This is a really big tooltip text that will not fit inside the window at the default position and thus will need to be broken into several lines and will need to breack the anchor restriction as well as reducing the font size")
+    tooltip_text.append("This is a really big tooltip text that will not fit inside the window at the default\nposition and thus will need to be broken into several lines and will need to breack\nthe anchor restriction as well as reducing the font size")
 
     # instantiate the ToolTips class, providing the list of widgets, tooltip strings and font (optional parameter)
     ToolTips(widgets, tooltip_text, font_obj)
