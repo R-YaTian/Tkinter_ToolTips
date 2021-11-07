@@ -1,5 +1,5 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Python ToolTips for Tkinter V1.0.5
+# Python ToolTips for Tkinter V1.0.6
 #
 # Copyright 2016, PedroHenriques
 # http://www.pedrojhenriques.com
@@ -120,7 +120,7 @@ class ToolTips:
 
         if (y + widget_ref.winfo_height() >= top_master.winfo_height()):
             y -= self.tt_widget.winfo_reqheight() + widget_ref.winfo_height() + 10
-        elif (y + widget_ref.winfo_height() + 20 >= top_master.winfo_height()):
+        elif (y + widget_ref.winfo_height() + self.tt_widget.winfo_reqheight() >= top_master.winfo_height()):
             y -= self.tt_widget.winfo_reqheight() + widget_ref.winfo_height()
 
         if (x + widget_ref.winfo_width() >= top_master.winfo_width()):
