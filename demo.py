@@ -63,7 +63,7 @@ try:
     tooltip_text.append("This is a really big tooltip text that will not fit inside the window at the default\nposition and thus will need to be broken into several lines and will need to breack\nthe anchor restriction as well as reducing the font size")
 
     # instantiate the ToolTips class, providing the list of widgets, tooltip strings and font (optional parameter)
-    ToolTips(widgets, tooltip_text, font_obj)
+    ToolTips(widgets, tooltip_text, font_obj, delay = 2, PseudoFollow = False, stime = 3) # delay = 2 means delayed for 3s, stime = 3 means hide the tip after 4s
 
     # start the GUI event listener loop
     app_window.mainloop()

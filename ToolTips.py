@@ -1,5 +1,5 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Python ToolTips for Tkinter V1.0.3
+# Python ToolTips for Tkinter V1.0.5
 #
 # Copyright 2016, PedroHenriques
 # http://www.pedrojhenriques.com
@@ -11,6 +11,8 @@
 
 import tkinter.ttk as ttk
 import tkinter.font as tkFont
+from time import time
+from tkinter import Toplevel
 
 class ToolTips:
     """This class will display a tooltip around a widget that is being hovered over.
@@ -31,7 +33,7 @@ class ToolTips:
     # class variables used to control the vertical space between the tooltip and the event widget
     vertical_margin_ = 0
 
-    def __init__(self, widgets, tooltip_text, font=None):
+    def __init__(self, widgets, tooltip_text, font=None, delay=1, PseudoFollow=True, stime=0):
         # check if the 2 lists have the same number of items, and if not raise an exception
         if (len(widgets) != len(tooltip_text)):
             raise ValueError("The number of widgets supplied does not match the number of tooltip strings provided.")
@@ -59,6 +61,7 @@ class ToolTips:
         for widget in self.widgets:
             # set the binds
             self.setWidgetBinds(widget)
+            ToolTip(self, widget, delay, PseudoFollow, stime)
 
         # instance variable where the tooltip widget will be stored
         self.tt_widget = None
@@ -66,14 +69,12 @@ class ToolTips:
         self.tt_text = ""
 
     def setWidgetBinds(self, widget):
-        widget.bind('<Enter>', self.showToolTips, '+')
-        widget.bind("<Leave>", self.hideToolTips, '+')
         widget.bind("<Button-1>", self.hideToolTips, '+')
 
     # this method will be called when widgets with tooltips are hovered over
     def showToolTips(self, event):
         # get a reference to the event widget
-        widget_ref = event.widget
+        widget_ref = event
 
         # check if we were able to grab a pointer to a widget and that we have that widget in
         # widget list supplied to the constructor
@@ -195,3 +196,69 @@ class ToolTips:
 
         # grab the tt_font's font size
         self.tt_font_size = self.tt_font["size"]
+
+class ToolTip(Toplevel):
+    # ToolTipPseudoToplevel
+    def __init__(self, ToolTips, wdgt, delay=1, PseudoFollow=True, stime=0):
+        self.ToolTips = ToolTips
+        self.wdgt = wdgt
+        self.parent = self.wdgt.master                                          # The parent of the ToolTip is the parent of the ToolTips widget
+        Toplevel.__init__(self, self.parent, bg='black', padx=1, pady=1)
+        self.withdraw()                                                         # Hide initially
+        self.overrideredirect(True)                                             # The ToolTip Toplevel should have no frame or title bar
+        self.delay = delay
+        self.visible = 0
+        self.lastMotion = 0
+        self.follow = PseudoFollow
+        self.stime = stime
+        self.timer_id = None
+        self.wdgt.bind('<Enter>', self.spawn, '+')                              # Add bindings to the widget.This will NOT override bindings that the widget already has
+        self.wdgt.bind('<Leave>', self.hide, '+')
+        self.wdgt.bind('<Motion>', self.move, '+')
+
+    def spawn(self, event=None):
+        #Spawn the ToolTip.This simply makes the ToolTip eligible for display
+        #Usually this is caused by entering the widget
+        """
+        Arguments:
+          event: The event that called this funciton
+        """
+        self.visible = 1
+        if self.delay == 0:
+            self.show()
+        elif self.timer_id is None:
+            self.timer_id = self.after(int((self.delay + 1) * 1000), self.show) # The after function takes a time argument in miliseconds
+
+    def show(self):
+        #Displays the ToolTip if the time delay has been long enough
+        if self.visible == 1 and time() - self.lastMotion >= self.delay:
+            self.visible = 2
+        if self.visible == 2:
+            ToolTips.showToolTips(self.ToolTips, self.wdgt)
+        if self.stime != 0:
+            self.timer_id = self.after(int((self.stime + 1) * 1000), self.hide)
+
+    def move(self, event):
+        #Processes motion within the widget
+        """
+        Arguments:
+          event: The event that called this function
+        """
+        self.lastMotion = time()
+        if self.follow == False and self.delay != 0 and self.stime == 0:
+            ToolTips.hideToolTips(self.ToolTips, self.wdgt)
+            self.visible = 1
+            self.after(int((self.delay + 1) * 1000), self.show)
+
+    def hide(self, event=None):
+        #Hide the ToolTip.Usually this is caused by leaving the widget
+        """
+        Arguments:
+          event: The event that called this function
+        """
+        if self.timer_id is not None:
+            tid = self.timer_id
+            self.timer_id = None
+            self.after_cancel(tid)
+        ToolTips.hideToolTips(self.ToolTips, self.wdgt)
+        self.visible = 0
