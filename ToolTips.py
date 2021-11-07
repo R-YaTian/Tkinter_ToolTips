@@ -1,5 +1,5 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Python ToolTips for Tkinter V1.0.6
+# Python ToolTips for Tkinter V1.0.7
 #
 # Copyright 2016, PedroHenriques
 # http://www.pedrojhenriques.com
@@ -126,7 +126,7 @@ class ToolTips:
         if (x + widget_ref.winfo_width() >= top_master.winfo_width()):
             x -= widget_ref.winfo_width()
 
-        if x == 0:
+        if x <= 2:
             x += 3
 
         # draw the tooltip
